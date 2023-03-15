@@ -9,6 +9,11 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Linq;
+using CarTestTask.Repository;
+using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Dapper;
 
 namespace CarTestTask.Controllers
 {
@@ -17,20 +22,25 @@ namespace CarTestTask.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly UserRepository _userRepository;
 
         public AuthController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _userRepository = new UserRepository(configuration);
+        }
+        private bool CheckPassword(User userFromRequest)
+        {
+            return _userRepository.GetPassword(userFromRequest.UserName) == userFromRequest.Password;
         }
 
         [AllowAnonymous]
         [HttpPost(nameof(Auth))]
-        public IActionResult Auth([FromBody] User data)
+        public IActionResult Auth([FromBody] User user)
         {
-            var auth = Models.User.GetUsers().Any(u => u.UserName == data.UserName && u.Password == data.Password);
-            if (auth)
+            if (CheckPassword(user))
             {
-                var tokenString = GenerateJwtToken(data.UserName);
+                var tokenString = GenerateJwtToken(user.UserName);
                 return Ok(new { Token = tokenString });
             }
             return BadRequest(new {Message = "Incorrect username or password."});
@@ -62,6 +72,5 @@ namespace CarTestTask.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
     }
 }
