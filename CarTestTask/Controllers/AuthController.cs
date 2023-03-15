@@ -35,7 +35,7 @@ namespace CarTestTask.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost(nameof(Auth))]
+        [HttpPost]
         public IActionResult Auth([FromBody] User user)
         {
             if (CheckPassword(user))
