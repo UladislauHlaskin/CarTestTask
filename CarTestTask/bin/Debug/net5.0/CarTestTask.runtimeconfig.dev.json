@@ -1,0 +1,9 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Vladislav Glazkin\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Vladislav Glazkin\\.nuget\\packages",
+      "D:\\Programming\\Shared\\NuGetPackages"
+    ]
+  }
+}
